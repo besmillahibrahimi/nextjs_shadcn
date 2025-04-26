@@ -49,6 +49,7 @@ export const menus: MenuGroup[] = [
   {
     label: "SETTINGS",
     icon: "mdi:cog",
+    type: "dropdown",
     href: "#",
     menus: [
       {
@@ -73,7 +74,7 @@ export const menus: MenuGroup[] = [
         label: "Appearance",
         icon: "mdi:palette",
         href: "/appearance",
-        type: "collapsible",
+        type: "dropdown",
         menus: [
           {
             label: "Theme",

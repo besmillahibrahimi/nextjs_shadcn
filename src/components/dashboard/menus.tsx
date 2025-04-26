@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronRight, MoreHorizontal, type LucideIcon } from "lucide-react";
+import { ChevronRight, MoreHorizontal } from "lucide-react";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
@@ -9,6 +9,7 @@ import {
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
+  sidebarMenuButtonVariants,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
@@ -22,6 +23,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import { cn } from "@/lib/utils";
+import type { VariantProps } from "class-variance-authority";
 
 export function MenuGroups({
   menus,
@@ -39,10 +43,7 @@ export function MenuGroups({
               return (
                 <SidebarMenuItem key={item.label?.toString()}>
                   <SidebarMenuButton asChild>
-                    <a href={item.href}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </a>
+                    <Item menu={item} />
                   </SidebarMenuButton>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -59,6 +60,7 @@ export function MenuGroups({
                       {" "}
                       {item.menus?.map((subItem) => (
                         <DropdownMenuItem key={subItem.label?.toString()}>
+                          <Icon icon={item.icon} />
                           <span>{subItem.label}</span>
                         </DropdownMenuItem>
                       ))}
@@ -70,10 +72,7 @@ export function MenuGroups({
               <Collapsible key={item.label?.toString()} asChild defaultOpen={item.isActive}>
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild tooltip={item.label?.toString()}>
-                    <Link href={item.href ?? "#"}>
-                      <item.icon />
-                      <span>{item.label}</span>
-                    </Link>
+                    <Item menu={item} />
                   </SidebarMenuButton>
                   {item.menus?.length ? (
                     <>
@@ -88,9 +87,7 @@ export function MenuGroups({
                           {item.menus?.map((subItem) => (
                             <SidebarMenuSubItem key={subItem.label?.toString()}>
                               <SidebarMenuSubButton asChild>
-                                <Link href={subItem.href ?? "#"}>
-                                  <span>{subItem.label}</span>
-                                </Link>
+                                <Item menu={subItem} />
                               </SidebarMenuSubButton>
                             </SidebarMenuSubItem>
                           ))}
@@ -106,10 +103,7 @@ export function MenuGroups({
           return (
             <SidebarMenuItem key={item.label?.toString()}>
               <SidebarMenuButton asChild tooltip={item.label?.toString()}>
-                <Link href={item.href ?? "#"}>
-                  <item.icon />
-                  <span>{item.label}</span>
-                </Link>
+                <Item menu={item} />
               </SidebarMenuButton>
             </SidebarMenuItem>
           );
@@ -117,4 +111,26 @@ export function MenuGroups({
       </SidebarMenu>
     </SidebarGroup>
   ));
+}
+
+function Item({
+  menu,
+  size,
+  variant,
+  className,
+}: { menu: Menu; className?: string } & VariantProps<typeof sidebarMenuButtonVariants>) {
+  const item = (
+    <>
+      {menu.icon && <Icon icon={menu.icon} />}
+      <span>{menu.label}</span>
+    </>
+  );
+
+  return menu.href ? (
+    <Link className={cn(sidebarMenuButtonVariants({ variant, size }), className)} href={menu.href}>
+      {item}
+    </Link>
+  ) : (
+    item
+  );
 }
