@@ -9,13 +9,16 @@ import {
   SidebarMenu,
   SidebarMenuAction,
   SidebarMenuButton,
-  sidebarMenuButtonVariants,
   SidebarMenuItem,
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  sidebarMenuButtonVariants,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { cn } from "@/lib/utils";
+import { Icon } from "@iconify/react/dist/iconify.js";
+import type { VariantProps } from "class-variance-authority";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -23,9 +26,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import { cn } from "@/lib/utils";
-import type { VariantProps } from "class-variance-authority";
 
 export function MenuGroups({
   menus,

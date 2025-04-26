@@ -1,4 +1,4 @@
-import { serverSchema, type ServerEnv } from "./schema";
+import { type ServerEnv, serverSchema } from "./schema";
 
 function parseServerEnv(): ServerEnv {
   const env = {

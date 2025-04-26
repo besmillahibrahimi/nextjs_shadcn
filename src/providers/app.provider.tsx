@@ -1,9 +1,9 @@
 "use client";
 
-import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from "react";
+import { type ReactNode, createContext, useCallback, useContext, useMemo, useState } from "react";
 
-import { type AuthState, useAuth } from "@/hooks/useAuth";
 import { Toaster } from "@/components/ui/sonner";
+import { type AuthState, useAuth } from "@/hooks/useAuth";
 
 interface AppContextType {
   auth: AuthState;

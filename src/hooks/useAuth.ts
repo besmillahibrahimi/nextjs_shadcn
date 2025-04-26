@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useTransition, useReducer } from "react";
+import { useCallback, useReducer, useTransition } from "react";
 
 interface User {
   id: string;

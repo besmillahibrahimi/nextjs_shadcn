@@ -1,6 +1,6 @@
 "use client";
 
-import { clientSchema, type ClientEnv } from "./schema";
+import { type ClientEnv, clientSchema } from "./schema";
 
 function parseClientEnv(): ClientEnv {
   const env = {
