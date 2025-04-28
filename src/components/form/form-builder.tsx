@@ -1,11 +1,20 @@
 // components/form-builder/FormBuilder.tsx
 
-import { useForm, FormProvider, useFieldArray, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import type { FormFieldSchema, FormSchema } from "@/components/form/types";
 import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -13,29 +22,25 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
 import { CalendarIcon, Plus, Trash2 } from "lucide-react";
 import {
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormDescription,
-  FormMessage,
-} from "@/components/ui/form";
-import type { FormSchema, FormFieldSchema } from "@/components/form/types";
+  Controller,
+  FormProvider,
+  type UseFormReturn,
+  useFieldArray,
+  useForm,
+} from "react-hook-form";
 import { buildZodSchema, generateDefaultValues } from "./utils";
 
 // Field renderer component
 const FieldRenderer: React.FC<{
   field: FormFieldSchema;
-  form: any;
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  form: UseFormReturn<any, unknown, any>;
   parentPath?: string;
 }> = ({ field, form, parentPath = "" }) => {
   const fieldName = parentPath ? `${parentPath}.${field.name}` : field.name;
@@ -388,7 +393,7 @@ const FieldRenderer: React.FC<{
 
 export interface FormBuilderProps {
   schema: FormSchema;
-  onSubmit?: (data: any) => void;
+  onSubmit?: (data: Record<string, unknown>) => void;
   onCancel?: () => void;
 }
 
@@ -402,7 +407,7 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ schema, onSubmit, onCa
     mode: "onBlur",
   });
 
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: Record<string, unknown>) => {
     if (schema.onSubmit) {
       schema.onSubmit(data);
     }

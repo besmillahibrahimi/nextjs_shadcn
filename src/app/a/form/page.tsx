@@ -2,11 +2,10 @@
 
 "use client";
 
-import React from "react";
 import { FormBuilder } from "@/components/form/form-builder";
 import type { FormSchema } from "@/components/form/types";
-import { z } from "zod";
 import { toast } from "sonner";
+import { z } from "zod";
 
 const exampleSchema: FormSchema = {
   fields: [
@@ -189,7 +188,7 @@ const exampleSchema: FormSchema = {
       render: ({ value, onChange }) => (
         <textarea
           value={value || ""}
-          onChange={(e) => onChange?.(e as any)}
+          onChange={(e) => onChange?.(e as unknown as React.ChangeEvent<HTMLInputElement>)}
           rows={5}
           className="w-full p-2 border rounded-md"
           placeholder="Additional information you'd like to share..."
@@ -205,7 +204,7 @@ const exampleSchema: FormSchema = {
 };
 
 export default function FormBuilderDemo() {
-  const handleSubmit = (data: any) => {
+  const handleSubmit = (data: Record<string, unknown>) => {
     console.log("Form data:", data);
     toast("Form Submitted", {
       description: "Your application has been successfully submitted.",

@@ -14,7 +14,7 @@ export type ValidationRule = {
     | "pattern"
     | "oneOf"
     | "custom";
-  value?: any;
+  value?: unknown;
   message?: string;
 };
 

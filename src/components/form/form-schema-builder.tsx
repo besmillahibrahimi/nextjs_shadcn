@@ -2,12 +2,11 @@
 
 "use client";
 
-import { useState } from "react";
+import type { FormFieldSchema, FormSchema } from "@/components/form/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
@@ -15,13 +14,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { FormSchema, FormFieldSchema } from "@/components/form/types";
-import { FormBuilder } from "./form-builder";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
+import { FormBuilder } from "./form-builder";
 
 const FIELD_TYPES = [
   { label: "Text", value: "text" },
+  { label: "Text Area", value: "textarea" },
   { label: "Email", value: "email" },
   { label: "Password", value: "password" },
   { label: "Number", value: "number" },
@@ -96,7 +97,10 @@ export const FormSchemaBuilder: React.FC = () => {
   };
 
   const handleTypeChange = (type: string) => {
-    setCurrentField((prev) => ({ ...prev, type: type as any }));
+    setCurrentField((prev) =>
+      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+      ({ ...prev, type: type as any })
+    );
   };
 
   return (

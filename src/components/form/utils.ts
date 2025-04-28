@@ -50,20 +50,20 @@ export const createValidation = (fieldType: string, rules: ValidationRule[] = []
         break;
       case "min":
         if (fieldType === "number") {
-          schema = (schema as z.ZodNumber).min(rule.value, rule.message);
+          schema = (schema as z.ZodNumber).min(rule.value as number, rule.message);
         } else if (fieldType === "date") {
-          schema = (schema as z.ZodDate).min(new Date(rule.value), rule.message);
+          schema = (schema as z.ZodDate).min(new Date(rule.value as Date | string), rule.message);
         } else if (fieldType === "array") {
-          schema = (schema as z.ZodArray<any>).min(rule.value, rule.message);
+          schema = (schema as z.ZodArray<z.ZodAny>).min(rule.value as number, rule.message);
         }
         break;
       case "max":
         if (fieldType === "number") {
-          schema = (schema as z.ZodNumber).max(rule.value, rule.message);
+          schema = (schema as z.ZodNumber).max(rule.value as number, rule.message);
         } else if (fieldType === "date") {
-          schema = (schema as z.ZodDate).max(new Date(rule.value), rule.message);
+          schema = (schema as z.ZodDate).max(new Date(rule.value as Date), rule.message);
         } else if (fieldType === "array") {
-          schema = (schema as z.ZodArray<any>).max(rule.value, rule.message);
+          schema = (schema as z.ZodArray<z.ZodAny>).max(rule.value as number, rule.message);
         }
         break;
       case "minLength":
@@ -75,7 +75,7 @@ export const createValidation = (fieldType: string, rules: ValidationRule[] = []
           fieldType === "tel" ||
           fieldType === "password"
         ) {
-          schema = (schema as z.ZodString).min(rule.value, rule.message);
+          schema = (schema as z.ZodString).min(rule.value as number, rule.message);
         }
         break;
       case "maxLength":
@@ -87,7 +87,7 @@ export const createValidation = (fieldType: string, rules: ValidationRule[] = []
           fieldType === "tel" ||
           fieldType === "password"
         ) {
-          schema = (schema as z.ZodString).max(rule.value, rule.message);
+          schema = (schema as z.ZodString).max(rule.value as number, rule.message);
         }
         break;
       case "email":
@@ -110,17 +110,18 @@ export const createValidation = (fieldType: string, rules: ValidationRule[] = []
           fieldType === "password"
         ) {
           schema = (schema as z.ZodString).regex(
-            new RegExp(rule.value),
+            new RegExp(rule.value as string),
             rule.message ?? "Invalid format"
           );
         }
         break;
       case "oneOf":
-        schema = z.enum(rule.value, { message: rule.message });
+        schema = z.enum(rule.value as [string, ...string[]], { message: rule.message });
         break;
       case "custom":
         if (typeof rule.value === "function") {
-          schema = schema.refine(rule.value, { message: rule.message });
+          // biome-ignore lint/complexity/noBannedTypes: <explanation>
+          schema = schema.refine((a) => (rule.value as Function)(a), { message: rule.message });
         }
         break;
     }
@@ -153,14 +154,14 @@ export function buildZodSchema(schema: FormSchema): z.ZodTypeAny {
 }
 
 // Helper to generate default values from schema
-export function generateDefaultValues(schema: FormSchema): Record<string, any> {
-  const defaultValues: Record<string, any> = {};
+export function generateDefaultValues(schema: FormSchema): Record<string, unknown> {
+  const defaultValues: Record<string, unknown> = {};
 
   for (const field of schema.fields) {
     if (field.defaultValue !== undefined) {
       defaultValues[field.name] = field.defaultValue;
     } else if (field.type === "object") {
-      const nestedDefaultValues = {} as Record<string, any>;
+      const nestedDefaultValues = {} as Record<string, unknown>;
 
       for (const [key, nestedField] of Object.entries(field.properties)) {
         if (nestedField.defaultValue !== undefined) {
