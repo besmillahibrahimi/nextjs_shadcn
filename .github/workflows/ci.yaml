@@ -2,7 +2,13 @@ name: Code quality
 
 on:
   push:
+    branches-ignore:
+      - main
+      - master
   pull_request:
+    branches:
+      - main
+      - master
 
 jobs:
   quality:
@@ -17,3 +23,27 @@ jobs:
           version: latest
       - name: Run Biome
         run: biome ci ./src
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Use Node.js 
+        uses: actions/setup-node@v4
+        with:
+          node-version: latest
+          cache: 'pnpm'
+      
+      - name: Install Dependencies
+        run: pnpm install
+
+      - name: Type Check
+        run: pnpm check:type
+
+      - name: Build
+        run: pnpm build

@@ -6,15 +6,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-
-      "suspicious": {
-        "noExplicitAny": "warn"
-      },
-      "style": {
-        "useConst": "info",
-        "useTemplate": "info"
-      }
+      "recommended": true
     }
   },
   "formatter": {

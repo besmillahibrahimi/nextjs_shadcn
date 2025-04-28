@@ -49,7 +49,6 @@ export const menus: MenuGroup[] = [
   {
     label: "SETTINGS",
     icon: "mdi:cog",
-    type: "dropdown",
     href: "#",
     menus: [
       {
