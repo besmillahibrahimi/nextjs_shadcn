@@ -23,11 +23,8 @@ jobs:
           version: latest
       - name: Run Biome
         run: biome ci ./src
-  type-check:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [22]
     steps:
       - uses: actions/checkout@v4
 
@@ -36,10 +33,10 @@ jobs:
         with:
           version: 10
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: latest
           cache: 'pnpm'
       
       - name: Install Dependencies
@@ -47,14 +44,6 @@ jobs:
 
       - name: Type Check
         run: pnpm check:type
-  build:
-    needs: type-check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Use Node.js from Type Check
-        uses: actions/setup-node@v3
-        with:
-          node-version: latest
 
       - name: Build
         run: pnpm build
