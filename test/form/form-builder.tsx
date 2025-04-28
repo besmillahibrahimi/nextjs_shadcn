@@ -1,10 +1,7 @@
-// __tests__/FormBuilder.test.tsx
-
-import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { FormBuilder } from '@/components/form/FormBuilder';
-import { FormSchema } from '@/types/form-schema';
+import { FormBuilder } from '@/components/form/form-builder';
+import type { FormSchema } from '@/components/form/types';
 import { z } from 'zod';
 
 // Mock onSubmit function

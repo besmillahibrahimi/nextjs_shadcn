@@ -1,120 +1,50 @@
-type ValidationRule = {
-  type: "required" | "min" | "max" | "pattern" | "custom";
-  message: string;
+import type { ReactNode } from "react";
+import type { z } from "zod";
+import type { InputProps } from "../ui/input";
+
+export type ValidationRule = {
+  type:
+    | "required"
+    | "min"
+    | "max"
+    | "minLength"
+    | "maxLength"
+    | "email"
+    | "url"
+    | "pattern"
+    | "oneOf"
+    | "custom";
   value?: any;
-  validator?: (value: any) => boolean;
+  message?: string;
 };
-
-type BaseFieldSchema = {
-  name: string;
-  label: string;
-  description?: string;
-  placeholder?: string;
-  defaultValue?: any;
-  disabled?: boolean;
-  hidden?: boolean;
-  validation?: ValidationRule[];
-  className?: string;
-  style?: React.CSSProperties;
-  attributes?: Record<string, any>;
-};
-
-type TextFieldSchema = BaseFieldSchema & {
-  type: "text" | "email" | "password" | "url" | "tel";
-};
-
-type NumberFieldSchema = BaseFieldSchema & {
-  type: "number";
-  min?: number;
-  max?: number;
-  step?: number;
-};
-
-type DateFieldSchema = BaseFieldSchema & {
-  type: "date";
-  min?: string;
-  max?: string;
-};
-
-type SelectOption = {
-  label: string;
-  value: string | number;
-  disabled?: boolean;
-};
-
-type SelectFieldSchema = BaseFieldSchema & {
-  type: "select";
-  options: SelectOption[];
-  multiple?: boolean;
-};
-
-type RadioFieldSchema = BaseFieldSchema & {
-  type: "radio";
-  options: SelectOption[];
-};
-
-type CheckboxFieldSchema = BaseFieldSchema & {
-  type: "checkbox";
-  text?: string;
-};
-
-type ObjectFieldSchema = BaseFieldSchema & {
-  type: "object";
-  properties: FormFieldSchema[];
-};
-
-type ArrayFieldSchema = BaseFieldSchema & {
-  type: "array";
-  itemSchema: FormFieldSchema;
-  minItems?: number;
-  maxItems?: number;
-};
-
-type FormFieldSchema =
-  | TextFieldSchema
-  | NumberFieldSchema
-  | DateFieldSchema
-  | SelectFieldSchema
-  | RadioFieldSchema
-  | CheckboxFieldSchema
-  | ObjectFieldSchema
-  | ArrayFieldSchema;
-
-type FormSchema = {
-  title?: string;
-  description?: string;
-  fields: FormFieldSchema[];
-  className?: string;
-  style?: React.CSSProperties;
-  onSubmit?: (values: Record<string, any>) => void;
-};
-
-// =================================================
-
-// types/form-schema.ts
-
-import { ReactNode } from "react";
-import { z } from "zod";
 
 // Base field interface that all field types will extend
-export interface BaseFieldSchema {
+type BaseFieldSchema = {
   name: string;
-  label?: string;
+  label?: ReactNode;
   description?: string;
-  required?: boolean;
+  placeholder?: string;
+  defaultValue?: unknown;
   disabled?: boolean;
+  required?: boolean;
   hidden?: boolean;
+  validation?: z.ZodTypeAny;
+  rules?: ValidationRule[];
   className?: string;
   wrapperClassName?: string;
   labelClassName?: string;
-  validation?: z.ZodTypeAny;
-  defaultValue?: any;
-  placeholder?: string;
-}
+  style?: React.CSSProperties;
+};
 
 // Text field types
 export interface TextField extends BaseFieldSchema {
   type: "text" | "email" | "password" | "tel" | "url";
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+}
+export interface TextAreaField extends BaseFieldSchema {
+  type: "textarea";
   minLength?: number;
   maxLength?: number;
   pattern?: string;
@@ -131,14 +61,14 @@ export interface NumberField extends BaseFieldSchema {
 // Date field
 export interface DateField extends BaseFieldSchema {
   type: "date";
-  min?: string; // ISO date string
-  max?: string; // ISO date string
+  min?: Date | string; // ISO date string
+  max?: Date | string; // ISO date string
 }
 
 // Select field
 export interface SelectField extends BaseFieldSchema {
   type: "select";
-  options: Array<{ label: string; value: string | number; disabled?: boolean }>;
+  options: Array<{ label: ReactNode; value: string | number; disabled?: boolean }>;
   multiple?: boolean;
 }
 
@@ -155,10 +85,21 @@ export interface CheckboxField extends BaseFieldSchema {
   label: string;
 }
 
+export interface CheckboxGroupField extends BaseFieldSchema {
+  type: "checkbox-group";
+  label: string;
+  layout?: "horizontal" | "vertical";
+}
+
 // Switch field
 export interface SwitchField extends BaseFieldSchema {
   type: "switch";
   label: string;
+}
+export interface SwitchGroupField extends BaseFieldSchema {
+  type: "switch-group";
+  label: string;
+  layout?: "horizontal" | "vertical";
 }
 
 // Object field (nested form)
@@ -173,19 +114,20 @@ export interface ArrayField extends BaseFieldSchema {
   itemField: FormFieldSchema;
   minItems?: number;
   maxItems?: number;
-  addButtonText?: string;
-  removeButtonText?: string;
+  addButtonText?: ReactNode;
+  removeButtonText?: ReactNode;
 }
 
 // Custom field for extension
 export interface CustomField extends BaseFieldSchema {
   type: "custom";
-  render: (props: any) => ReactNode;
+  render: (props: InputProps) => ReactNode;
 }
 
 // Union of all field types
 export type FormFieldSchema =
   | TextField
+  | TextAreaField
   | NumberField
   | DateField
   | SelectField
@@ -199,7 +141,7 @@ export type FormFieldSchema =
 // Form schema type
 export interface FormSchema {
   fields: FormFieldSchema[];
-  onSubmit?: (data: any) => void;
+  onSubmit?: (data: Record<string, unknown>) => void;
   submitButtonText?: string;
   cancelButtonText?: string;
   showReset?: boolean;

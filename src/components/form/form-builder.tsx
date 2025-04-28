@@ -30,188 +30,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import type { FormSchema, FormFieldSchema } from "@/components/form/types";
-
-// Helper to build a Zod schema from our form schema
-function buildZodSchema(schema: FormSchema): z.ZodTypeAny {
-  const shape: Record<string, z.ZodTypeAny> = {};
-
-  schema.fields.forEach((field) => {
-    if (field.hidden) return;
-
-    // Use custom validation if provided
-    if (field.validation) {
-      shape[field.name] = field.validation;
-      return;
-    }
-
-    // Build validation based on field type and attributes
-    let fieldSchema: z.ZodTypeAny;
-
-    switch (field.type) {
-      case "text":
-      case "email":
-      case "password":
-      case "tel":
-      case "url": {
-        fieldSchema = z.string();
-
-        if (field.minLength !== undefined) {
-          fieldSchema = fieldSchema.min(field.minLength, {
-            message: `Must be at least ${field.minLength} characters`,
-          });
-        }
-
-        if (field.maxLength !== undefined) {
-          fieldSchema = fieldSchema.max(field.maxLength, {
-            message: `Must be at most ${field.maxLength} characters`,
-          });
-        }
-
-        if (field.pattern) {
-          fieldSchema = fieldSchema.regex(new RegExp(field.pattern), {
-            message: "Invalid format",
-          });
-        }
-
-        if (field.type === "email") {
-          fieldSchema = fieldSchema.email("Invalid email address");
-        }
-
-        break;
-      }
-
-      case "number": {
-        fieldSchema = z.coerce.number();
-
-        if (field.min !== undefined) {
-          fieldSchema = fieldSchema.min(field.min, {
-            message: `Must be at least ${field.min}`,
-          });
-        }
-
-        if (field.max !== undefined) {
-          fieldSchema = fieldSchema.max(field.max, {
-            message: `Must be at most ${field.max}`,
-          });
-        }
-
-        break;
-      }
-
-      case "date":
-        fieldSchema = z.date({
-          required_error: "Please select a date",
-          invalid_type_error: "That is not a valid date",
-        });
-
-        if (field.min) {
-          const minDate = new Date(field.min);
-          fieldSchema = fieldSchema.min(minDate, {
-            message: `Date must be after ${format(minDate, "PPP")}`,
-          });
-        }
-
-        if (field.max) {
-          const maxDate = new Date(field.max);
-          fieldSchema = fieldSchema.max(maxDate, {
-            message: `Date must be before ${format(maxDate, "PPP")}`,
-          });
-        }
-
-        break;
-
-      case "select":
-        fieldSchema = field.multiple ? z.array(z.string()) : z.string();
-        break;
-
-      case "radio":
-        fieldSchema = z.string();
-        break;
-
-      case "checkbox":
-        fieldSchema = z.boolean();
-        break;
-
-      case "switch":
-        fieldSchema = z.boolean();
-        break;
-
-      case "object": {
-        const nestedSchema = {} as Record<string, z.ZodTypeAny>;
-
-        Object.entries(field.properties).forEach(([key, nestedField]) => {
-          const nestedFormSchema: FormSchema = { fields: [nestedField] };
-          nestedSchema[key] = buildZodSchema(nestedFormSchema).shape[nestedField.name];
-        });
-
-        fieldSchema = z.object(nestedSchema);
-        break;
-      }
-
-      case "array": {
-        const nestedFormSchema: FormSchema = { fields: [field.itemField] };
-        const itemSchema = buildZodSchema(nestedFormSchema).shape[field.itemField.name];
-
-        fieldSchema = z.array(itemSchema);
-
-        if (field.minItems !== undefined) {
-          fieldSchema = fieldSchema.min(field.minItems, {
-            message: `Must have at least ${field.minItems} items`,
-          });
-        }
-
-        if (field.maxItems !== undefined) {
-          fieldSchema = fieldSchema.max(field.maxItems, {
-            message: `Must have at most ${field.maxItems} items`,
-          });
-        }
-
-        break;
-      }
-
-      case "custom":
-        fieldSchema = z.any();
-        break;
-
-      default:
-        fieldSchema = z.any();
-    }
-
-    // Handle required fields
-    shape[field.name] = field.required ? fieldSchema : fieldSchema.optional();
-  });
-
-  return z.object(shape);
-}
-
-// Helper to generate default values from schema
-function generateDefaultValues(schema: FormSchema): Record<string, any> {
-  const defaultValues: Record<string, any> = {};
-
-  schema.fields.forEach((field) => {
-    if (field.defaultValue !== undefined) {
-      defaultValues[field.name] = field.defaultValue;
-    } else if (field.type === "object") {
-      const nestedDefaultValues = {} as Record<string, any>;
-
-      Object.entries(field.properties).forEach(([key, nestedField]) => {
-        if (nestedField.defaultValue !== undefined) {
-          nestedDefaultValues[key] = nestedField.defaultValue;
-        }
-      });
-
-      defaultValues[field.name] = nestedDefaultValues;
-    } else if (field.type === "array") {
-      defaultValues[field.name] = [];
-    } else if (field.type === "checkbox" || field.type === "switch") {
-      defaultValues[field.name] = false;
-    } else if (field.type === "select" && field.multiple) {
-      defaultValues[field.name] = [];
-    }
-  });
-
-  return defaultValues;
-}
+import { buildZodSchema, generateDefaultValues } from "./utils";
 
 // Field renderer component
 const FieldRenderer: React.FC<{
@@ -609,17 +428,17 @@ export const FormBuilder: React.FC<FormBuilderProps> = ({ schema, onSubmit, onCa
         <div className="flex justify-end space-x-2">
           {schema.showReset && (
             <Button type="button" variant="outline" onClick={() => form.reset()}>
-              {schema.resetButtonText || "Reset"}
+              {schema.resetButtonText ?? "Reset"}
             </Button>
           )}
 
           {onCancel && (
             <Button type="button" variant="outline" onClick={onCancel}>
-              {schema.cancelButtonText || "Cancel"}
+              {schema.cancelButtonText ?? "Cancel"}
             </Button>
           )}
 
-          <Button type="submit">{schema.submitButtonText || "Submit"}</Button>
+          <Button type="submit">{schema.submitButtonText ?? "Submit"}</Button>
         </div>
       </form>
     </FormProvider>

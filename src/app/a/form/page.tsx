@@ -3,7 +3,7 @@
 "use client";
 
 import React from "react";
-import { FormBuilder } from "@/components/form/FormBuilder";
+import { FormBuilder } from "@/components/form/form-builder";
 import type { FormSchema } from "@/components/form/types";
 import { z } from "zod";
 import { toast } from "sonner";
@@ -189,7 +189,7 @@ const exampleSchema: FormSchema = {
       render: ({ value, onChange }) => (
         <textarea
           value={value || ""}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={(e) => onChange?.(e as any)}
           rows={5}
           className="w-full p-2 border rounded-md"
           placeholder="Additional information you'd like to share..."
@@ -215,7 +215,6 @@ export default function FormBuilderDemo() {
   const handleCancel = () => {
     toast("Form Cancelled", {
       description: "Your application has been cancelled.",
-      variant: "destructive",
     });
   };
 

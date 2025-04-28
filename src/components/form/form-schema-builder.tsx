@@ -15,8 +15,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormSchema, FormFieldSchema } from "@/types/form-schema";
-import { FormBuilder } from "./FormBuilder";
+import type { FormSchema, FormFieldSchema } from "@/components/form/types";
+import { FormBuilder } from "./form-builder";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
@@ -151,7 +151,7 @@ export const FormSchemaBuilder: React.FC = () => {
                     <Label htmlFor="fieldLabel">Label</Label>
                     <Input
                       id="fieldLabel"
-                      value={currentField.label}
+                      value={currentField.label?.toString()}
                       onChange={(e) =>
                         setCurrentField((prev) => ({ ...prev, label: e.target.value }))
                       }
@@ -265,7 +265,7 @@ export const FormSchemaBuilder: React.FC = () => {
                       <ul className="mt-2 space-y-2">
                         {formSchema.fields.map((field, index) => (
                           <li
-                            key={index}
+                            key={field.name}
                             className="flex justify-between items-center p-2 bg-muted rounded-md"
                           >
                             <span>
