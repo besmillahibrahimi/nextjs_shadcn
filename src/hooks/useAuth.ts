@@ -8,6 +8,7 @@ interface User {
   name: string;
   credits: number;
   monthlyCredits: number;
+  avatar?: string;
   // Add other user properties as needed
   [key: string]: unknown;
 }
