@@ -1,6 +1,6 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 // src/components/DynamicTable/DynamicTable.test.tsx
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
 
 import { DynamicTable } from "./dynamic-table";
 import type { ColumnDef } from "./types";
@@ -228,7 +228,7 @@ describe("DynamicTable", () => {
     const rows = screen.getAllByRole("row");
     const nameOrder = Array.from(rows)
       .slice(1)
-      .map((row) => row.textContent?.match(/[A-Za-z]+ [A-Za-z]+/)![0]);
+      .map((row) => row.textContent?.match(/[A-Za-z]+ [A-Za-z]+/)?.[0]);
 
     // Verify names are in ascending order by length
     const nameLengths = nameOrder.map((name) => name?.length || 0);

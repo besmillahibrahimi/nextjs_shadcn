@@ -1,13 +1,5 @@
-// src/components/DynamicTable/DynamicTable.tsx
-import { useState, useEffect, useCallback } from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Pagination,
   PaginationContent,
@@ -17,9 +9,17 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { ChevronDown, ChevronUp, Search, X } from "lucide-react";
+// src/components/DynamicTable/DynamicTable.tsx
+import { useCallback, useEffect, useState } from "react";
 import type { SortDirection, TableProps } from "./types";
 
 export function DynamicTable<T>({

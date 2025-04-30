@@ -1,13 +1,13 @@
 // src/app/examples/table/page.tsx
 "use client";
 
-import { useState } from "react";
 import { DynamicTable } from "@/components/table/dynamic-table";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Check, X, ArrowUpDown } from "lucide-react";
 import type { ColumnDef, SortDirection } from "@/components/table/types";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { ArrowUpDown, Check, X } from "lucide-react";
+import { useState } from "react";
 
 // Example data type
 interface User {
